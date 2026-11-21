@@ -58,6 +58,40 @@ Se puede observar que la posición del Transform del jugador es siempre cero per
 
 > Tarea: Aplicar un fondo con scroll a tu escena utilizando la técnica descrita en b.
 
+Para seguir al jugador, se ha introducido una Cinemachine Camera.
+Posteriormente, se ha reaprovechado el código anterior para hacer un método que se llame en `Update()`:
+```cs
+private void CheckCameraDistance()
+{
+    float cameraX = _camera.transform.position.x;
+    if (cameraX > _initialX + _spriteWidth)
+    {
+        _tempBackground = _currentBackground;
+        _currentBackground = _rightBackground;
+        _rightBackground = _leftBackground;
+        _leftBackground = _tempBackground;
+
+        _initialX = _currentBackground.position.x;
+        _rightBackground.position = new Vector2(_initialX + _spriteWidth, _currentBackground.position.y);
+    }
+    else if (cameraX < _initialX - _spriteWidth)
+    {
+        _tempBackground = _currentBackground;
+        _currentBackground = _leftBackground;
+        _leftBackground = _rightBackground;
+        _rightBackground = _tempBackground;
+        
+        _initialX = _currentBackground.position.x;
+        _leftBackground.position = new Vector2(_initialX - _spriteWidth, _currentBackground.position.y);
+    }
+}
+```
+
+Tanto en este caso como el anterior se ha optado por no utilizar la mitad del ancho de la cámara sino la posición actual para evitar jittering en los bordes, puesto que al ubicarse tres fondos, en los bordes entre ellos puede actualizarse indebidamente sus ubicaciones.
+Como resultado, se observa la misma visualización que antes, pero con el movimiento del jugador:
+
+![Scrolling player](./Media/scrollingPlayer.gif)
+
 
 2. Desplazar el punto a partir del cual se aplica la textura. La parte sobrante se aplica en el espacio vacío.
 

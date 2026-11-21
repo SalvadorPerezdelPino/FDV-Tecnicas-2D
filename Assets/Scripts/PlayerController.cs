@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private InputActionReference _moveAction;
     [SerializeField] private Animator _animator;
-    //[SerializeField] private float _speed; 
+    [SerializeField] private float _moveSpeed = 5.0f; 
     [SerializeField] private SpriteRenderer _spriteRenderer; 
 
     [SerializeField] private ScrollManager _scroll;
@@ -21,7 +21,9 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         _direction = _moveAction.action.ReadValue<float>();
-        _scroll.ScrollBackgrounds(_direction);
+        //_scroll.ScrollBackgrounds(_direction);
+        transform.Translate(_direction * _moveSpeed * Time.deltaTime, 0, 0);
+
         if (_direction > 0)
         {
             _spriteRenderer.flipX = false;
