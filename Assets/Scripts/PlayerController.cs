@@ -13,6 +13,15 @@ public class PlayerController : MonoBehaviour
     //private float _textureOffset;
 
     private float _direction;
+
+    public delegate void Message(float distance);
+    public event Message OnPlayerMove;
+
+    private float _timer = 0f;
+    [SerializeField] private ObjectPool _pool;
+
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,6 +36,9 @@ public class PlayerController : MonoBehaviour
         {
             _scrolls[i].ScrollBackgrounds(_direction);
         }
+
+        OnPlayerMove?.Invoke(_direction * _moveSpeed * Time.deltaTime);
+
         //transform.Translate(_direction * _moveSpeed * Time.deltaTime, 0, 0);
         //_textureOffset = _direction * _moveSpeed * Time.deltaTime;
         //_parallax.UpdateParallaxTexturesOffset(_textureOffset);
@@ -46,5 +58,15 @@ public class PlayerController : MonoBehaviour
         {
             _animator.SetBool("isRunning", false);
         }
+
+        _timer += Time.deltaTime;
+        if (_timer > 5f)
+        {
+            GameObject obj = _pool.RequestItem();
+            obj.SetActive(true);
+            obj.transform.position = transform.position + new Vector3(4, 0, 0);
+            _timer = 0f;
+        }
+
     }
 }

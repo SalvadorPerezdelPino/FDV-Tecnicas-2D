@@ -144,4 +144,59 @@ Ajustando las velocidades, se puede obtener mayor diferencia entre las capas. Co
  
 > Tarea: En tu escena 2D crea un prefab que sirva de base para generar un tipo de objetos sobre los que vas a hacer un pooling de objetos que se recolectarán continuamente en tu escena. Cuando un objeto es recolectado debe pasar al pool y dejar de visualizarse. Este objeto estará disponible en el pool. En la escena, siempre que sea posible debe haber una cantidad de objetos que fijes, hasta que el número de objetos que no se han eliminado sea menor que dicha cantidad. Recuerda que para generar los objetos puedes usar el método Instantiate. Los objetos ya creados pueden estar activos o no, para ello usar SetActive. 
 
+Para esta tarea, se ha creado un objeto con un sprite de una bellota. Como quería seguir practicando con el parallax, preparé un script de movimiento para el objeto basado en los delegados de C#. Principalmente, se resume en la línea `_playerController.OnPlayerMove += Move;`, donde la distancia que debería recorrer el jugador, la recorre el objeto en dirección contraria. Con esto, los objetos se pueden mover en un parallax donde el jugador se mantiene quieto. El jugador envía el mensaje con la distancia que está recorriendo y los objetos que lo escuchen se moverán de acorde, sin tener que realizar un acople directo entre el jugador y los objetos en concreto.
+
+Además, añadí colisiones al jugador y los objetos para interactuar al tocarse. En este caso, el objeto vuelve al pool una vez alcanzado.
+
+El pool de objetos consta de una inicialización de todos con su consecuente desactivación:
+
+```cs
+void Awake()
+{
+    _pool = new List<GameObject>();
+    for (int i = 0; i < _poolSize; i++)
+    {
+        GameObject obj = Instantiate(_baseObject);
+        obj.GetComponent<ParallaxObject>().pool = this;
+        obj.SetActive(false);
+        _pool.Add(obj);
+    }
+}
+```
+
+Tras esto, con un método público en el pool se puede solicitar obtener un objeto del mismo para usarse. En este caso, se llama desde el jugador para colocarlo delante suyo:
+
+```cs
+public GameObject RequestItem()
+{
+    if (_pool.Count > 0)
+    {
+        GameObject obj = _pool[0];
+        _pool.RemoveAt(0);
+        return obj;
+    }
+
+    Debug.Log("No quedan objetos en el pool! Creando uno nuevo!");
+    GameObject newObj = Instantiate(_baseObject);
+    newObj.GetComponent<ParallaxObject>().pool = this;
+    _poolSize++;
+    return newObj;
+}
+```
+
+En caso de que el pool esté vacío, se genera un nuevo objeto y se agranda el máximo. Actualmente el número máximo solo es indicativo, pero se podría emplear para gestionar mejor los recursos.
+Aquí no se incluye la activación del objeto por si se desea realizar cualquier cambio previamente. Sin embargo, al devolver el objeto, este se desactiva por seguridad:
+
+```cs
+public void ReturnItem(GameObject obj)
+{
+    obj.SetActive(false);
+    _pool.Add(obj);
+}
+```
+
+Como resultado, los objetos se sacan del pool para aparecer en el juego, una vez se recogen, vuelven al pool:
+
+![Object Pool](./Media/objectPool.gif)
+
 > Tarea: Revisa tu código de la entrega anterior e indica las mejoras que podrías hacer de cara al rendimiento.
