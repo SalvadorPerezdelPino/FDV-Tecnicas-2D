@@ -8,8 +8,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5.0f; 
     [SerializeField] private SpriteRenderer _spriteRenderer; 
 
-    [SerializeField] private WrappedBackground _wrappedBackground;
-    private float _textureOffset;
+    //[SerializeField] private Parallax _parallax;
+    [SerializeField] private ScrollManager[] _scrolls;
+    //private float _textureOffset;
 
     private float _direction;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,10 +23,14 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         _direction = _moveAction.action.ReadValue<float>();
-        //_scroll.ScrollBackgrounds(_direction);
+        for (int i = 0; i < _scrolls.Length; i++)
+        {
+            _scrolls[i].ScrollBackgrounds(_direction);
+        }
         //transform.Translate(_direction * _moveSpeed * Time.deltaTime, 0, 0);
-        _textureOffset = _direction * _moveSpeed * Time.deltaTime;
-        _wrappedBackground.UpdateBackgroundOffset(_textureOffset);
+        //_textureOffset = _direction * _moveSpeed * Time.deltaTime;
+        //_parallax.UpdateParallaxTexturesOffset(_textureOffset);
+        //_wrappedBackground.UpdateBackgroundOffset(_textureOffset);
 
         if (_direction > 0)
         {

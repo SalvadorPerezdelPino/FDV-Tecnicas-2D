@@ -11,16 +11,11 @@ public class ScrollManager : MonoBehaviour
     [SerializeField] private float _spriteWidth;
     [SerializeField] private float _scrollSpeed = 5.0f;
 
-    private float _cameraWidth;
-
     private float _initialX;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Camera cam = _camera.GetComponent<Camera>();
-        _cameraWidth = cam.orthographicSize * cam.aspect;
-
         _initialX = _currentBackground.position.x;
         _leftBackground.position = new Vector2(_initialX - _spriteWidth, _currentBackground.position.y);
         _rightBackground.position = new Vector2(_initialX + _spriteWidth, _currentBackground.position.y);
@@ -29,7 +24,7 @@ public class ScrollManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckCameraDistance();
+        //CheckCameraDistance();
     }
 
     public void ScrollBackgrounds(float direction)

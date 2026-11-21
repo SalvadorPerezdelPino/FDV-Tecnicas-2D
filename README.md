@@ -118,7 +118,29 @@ Como resultado, se desplaza el fondo, con la cámara fija y con el jugador en la
 ## Efecto Parallax:
 > Tarea: Aplicar efecto parallax usando la técnica de scroll en la que se mueve continuamente la posición del fondo.
 
+Para este efecto, se ha reutilizado el código existente de ScrollManager y se han creados dos managers nuevos para cada capa (base, intermedia y frontal). Se han creado tres fondos en cada capa y asignados a cada manager correspondiente. Por el lado del jugador, este almacena las referencias de los tres managers y llama al método que actualiza sus posiciones. El efecto obtenido es un desplazamiento individual de cada capa del parallax, donde al alcanzar la distancia necesaria, el fondo auxiliar se vuelve el principal en cada capa:
+
+![Parallax with scroll](./Media/parallaxScrollManagers.gif)
+
 > Tarea: Aplicar efecto parallax actualizando el offset de la textura.
+
+Al igual que con el material en singular, actualizado por el jugador, se llama a un método dado el offset calculado según la distancia a recorrer:
+
+```cs
+public void UpdateParallaxTexturesOffset(float offset)
+{
+    for (int i = 0; i < _layers.Length; i++)
+    {
+        Material m = _layers[i];
+        Vector2 offset2D = new Vector2(offset, 0);
+        m.SetTextureOffset("_MainTex", m.GetTextureOffset("_MainTex") + offset2D * (i * _speedDifference + _baseSpeed));
+    }
+}
+```
+
+Ajustando las velocidades, se puede obtener mayor diferencia entre las capas. Como resultado, se observa el parallax sin mover al jugador ni utilizando fondos auxiliares:
+
+![Parallax with texture offset](./Media/parallaxTextureOffset.gif)
  
 > Tarea: En tu escena 2D crea un prefab que sirva de base para generar un tipo de objetos sobre los que vas a hacer un pooling de objetos que se recolectarán continuamente en tu escena. Cuando un objeto es recolectado debe pasar al pool y dejar de visualizarse. Este objeto estará disponible en el pool. En la escena, siempre que sea posible debe haber una cantidad de objetos que fijes, hasta que el número de objetos que no se han eliminado sea menor que dicha cantidad. Recuerda que para generar los objetos puedes usar el método Instantiate. Los objetos ya creados pueden estar activos o no, para ello usar SetActive. 
 
