@@ -200,3 +200,11 @@ Como resultado, los objetos se sacan del pool para aparecer en el juego, una vez
 ![Object Pool](./Media/objectPool.gif)
 
 > Tarea: Revisa tu código de la entrega anterior e indica las mejoras que podrías hacer de cara al rendimiento.
+
+Revisando el proyecto donde utilizamos la cámara Cinemachine y otros proyectos pasados, existen algunas cosas mejorables y otras que estaba haciendo bien:
+- Las referencias las obtenía desde el editor, sin utilizar `GetComponent<>()` ni `Find()`, por lo que el rendimiento mejora.
+- Las variables que se usen en bucles como `Update()` se declaran externamente para ahorrar recursos y no tener que ubicar nuevas variables idénticas en memoria.
+- Antes, utilizaba `collision.tag` en lugar de `collision.CompareTag`, por lo que es menos eficiente.
+- El mayor gasto de rendimiento que desconocía es que tanto `Start()` como `Update()` se ejecutan cuando están declaradas, pero no se ejecutan cuando no se declaran, aunque formen parte de los MonoBehaviours. Anteriormente asumía que dejarlos escritos era igual de eficientes, por lo que siempre los tengo colocados. Para mejorar el rendimiento, debería eliminar todas esas funciones vacías de todos los objetos donde no las use.
+- Por último, cada vez que quería eliminar un objeto, utilizaba `Destroy()`. Esto se puede mejorar en casos donde volverá a aparecer el mismo objeto, desactivándolo y volviéndolo a activar cuando sea necesario para evitar que el recolector de basura baje el rendimiento.
+
