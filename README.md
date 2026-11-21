@@ -60,6 +60,7 @@ Se puede observar que la posición del Transform del jugador es siempre cero per
 
 Para seguir al jugador, se ha introducido una Cinemachine Camera.
 Posteriormente, se ha reaprovechado el código anterior para hacer un método que se llame en `Update()`:
+
 ```cs
 private void CheckCameraDistance()
 {
@@ -96,6 +97,23 @@ Como resultado, se observa la misma visualización que antes, pero con el movimi
 2. Desplazar el punto a partir del cual se aplica la textura. La parte sobrante se aplica en el espacio vacío.
 
 > Tarea: Aplicar un fondo a tu escena aplicando la técnica del desplazamiento de textura.
+
+Para este caso, se ha creado un material con el shader Unlit/Texture, se ha aplicado a un Quad y se ha seleccionado un nuevo fondo con la propiedad Repeat para la envoltura.
+
+El offset de la textura lo calcula el jugador gracias a su "distancia" recorrida `_textureOffset = _direction * _moveSpeed * Time.deltaTime;`. Tras esto, lo envía al script que se encarga del fondo, llamando a este método:
+
+```cs
+public void UpdateBackgroundOffset(float offset)
+{
+    _offset += offset;
+
+    _renderer.material.mainTextureOffset = new Vector2(_offset, 0);
+}
+```
+
+Como resultado, se desplaza el fondo, con la cámara fija y con el jugador en la misma posición:
+
+![Wrapped texture](./Media/wrappedTexture.gif)
 
 ## Efecto Parallax:
 > Tarea: Aplicar efecto parallax usando la técnica de scroll en la que se mueve continuamente la posición del fondo.
