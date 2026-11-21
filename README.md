@@ -7,6 +7,54 @@ b. La cámara se desplaza a la derecha y el fondo está estático. Existe nuevam
 
 > Tarea: Aplicar un fondo con scroll a tu escena utilizando la técnica descrita en a.
 
+Para lograr esto, se ha creado un script que gestione el scroll del fondo.
+Al comienzo, se obtiene la posición inicial del fondo:
+
+```cs
+void Start()
+{
+    _initialX = _currentBackground.position.x;
+}
+```
+
+Después, se crea un método público al que, mediante referencia, el personaje se comunica para indicar la dirección:
+
+```cs
+public void ScrollBackgrounds(float direction)
+{
+    // Desplazamiento
+    _currentBackground.Translate(-direction * _scrollSpeed * Time.deltaTime, 0, 0);
+
+    // Seguimiento del fondo central
+    _leftBackground.position = new Vector2(_currentBackground.position.x - _spriteWidth, _currentBackground.position.y);
+    _rightBackground.position = new Vector2(_currentBackground.position.x + _spriteWidth, _currentBackground.position.y);
+
+    // Condiciones de cambio para ambas direcciones
+    if (_currentBackground.position.x < _initialX - _spriteWidth)
+    {
+        _tempBackground = _currentBackground;
+        _currentBackground = _rightBackground;
+        _rightBackground = _leftBackground;
+        _leftBackground = _tempBackground;
+        _initialX = _currentBackground.position.x;
+    }
+    else if (_currentBackground.position.x > _initialX + _spriteWidth)
+    {
+        _tempBackground = _currentBackground;
+        _currentBackground = _leftBackground;
+        _leftBackground = _rightBackground;
+        _rightBackground = _tempBackground;
+        _initialX = _currentBackground.position.x;
+    }
+}
+```
+
+En este caso, en vez de limitar el movimiento del jugador hacia la derecha, se ha propuesto una alternativa donde permite dirigirse en ambas direcciones. Como consecuencia, se han utilizado tres copias del fondo en lugar de dos, para poder gestionar ambos lados. El resultado es el siguiente:
+
+![Scrolling background](./Media/scrollingBackground.gif)
+
+Se puede observar que la posición del Transform del jugador es siempre cero pero el fondo se desplaza y logra el efecto de movimiento.
+
 
 > Tarea: Aplicar un fondo con scroll a tu escena utilizando la técnica descrita en b.
 
